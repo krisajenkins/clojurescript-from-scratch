@@ -1,0 +1,567 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<title>ClojureScript from Scratch</title>
+<meta name="author" content="(Kris Jenkins)"/>
+
+<link rel="stylesheet" href="file:///Users/kris/Work/ThirdParty/reveal.js/css/reveal.css"/>
+<link rel="stylesheet" href="file:///Users/kris/Work/ThirdParty/reveal.js/css/theme/default.css" id="theme"/>
+<link rel="stylesheet" href="ccc.css"/>
+<!-- If the query includes 'print-pdf', include the PDF print sheet -->
+<script>
+    if( window.location.search.match( /print-pdf/gi ) ) {
+        var link = document.createElement( 'link' );
+        link.rel = 'stylesheet';
+        link.type = 'text/css';
+        link.href = 'file:///Users/kris/Work/ThirdParty/reveal.js/css/print/pdf.css';
+        document.getElementsByTagName( 'head' )[0].appendChild( link );
+    }
+</script>
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+<section id="sec-title-slide">
+<h1>ClojureScript from Scratch</h1>
+<h2>Kris Jenkins</h2>
+<h2><a href="mailto:@krisajenkins">@krisajenkins</a></h2>
+<h2></h2>
+</section>
+<section>
+<section id="slide-sec-1">
+<h2 id="sec-1">ClojureScript From Scratch</h2>
+<div class="outline-text-2" id="text-1">
+</div><ul class="org-ul"><li><a id="sec-1-0-0-1" name="sec-1-0-0-1"></a>We'll Cover<br  /><ul>
+<li>Reading Clojure code</li>
+<li>Start playing with ClojureScript apps</li>
+<li>Get a taste of event-based UI coding.</li>
+
+</ul>
+</li></ul>
+
+</section>
+</section>
+<section>
+<section id="slide-sec-2">
+<h2 id="sec-2">Before We Start</h2>
+<p>
+What experience do we have in the room?
+</p>
+</section>
+</section>
+<section>
+<section id="slide-sec-3">
+<h2 id="sec-3">Syntax</h2>
+<div class="outline-text-2" id="text-3">
+</div></section>
+<section id="slide-sec-3-1">
+<h3 id="sec-3-1">Function Calls</h3>
+<div class="outline-text-3" id="text-3-1">
+</div><ul class="org-ul"><li><a id="sec-3-1-0-1" name="sec-3-1-0-1"></a>Here's a Familiar Function Call:<br  /><div class="org-src-container">
+
+<pre  class="src src-clojure">plus<span style="color: #66d9ef;">(</span>
+  5,
+  multiply<span style="color: #a6e22e;">(</span>2, 3<span style="color: #a6e22e;">)</span>
+<span style="color: #66d9ef;">)</span>
+</pre>
+</div>
+</li>
+
+<li><a id="sec-3-1-0-2" name="sec-3-1-0-2"></a>Commas are Whitespace<br  /><div class="org-src-container">
+
+<pre  class="src src-clojure">plus<span style="color: #66d9ef;">(</span>
+  5
+  multiply<span style="color: #a6e22e;">(</span>2 3<span style="color: #a6e22e;">)</span>
+<span style="color: #66d9ef;">)</span>
+</pre>
+</div>
+</li>
+
+<li><a id="sec-3-1-0-3" name="sec-3-1-0-3"></a>The Function Name is the 1st Item<br  /><div class="org-src-container">
+
+<pre  class="src src-clojure"><span style="color: #66d9ef;">(</span>plus
+  5
+  <span style="color: #a6e22e;">(</span>multiply 2 3<span style="color: #a6e22e;">)</span>
+<span style="color: #66d9ef;">)</span>
+</pre>
+</div>
+</li>
+
+<li><a id="sec-3-1-0-4" name="sec-3-1-0-4"></a>Tidy it Up<br  /><div class="org-src-container">
+
+<pre  class="src src-clojure"><span style="color: #66d9ef;">(</span>plus 5
+      <span style="color: #a6e22e;">(</span>multiply 2 3<span style="color: #a6e22e;">)</span><span style="color: #66d9ef;">)</span>
+</pre>
+</div>
+</li></ul>
+</section>
+<section id="slide-sec-3-2">
+<h3 id="sec-3-2">Lists</h3>
+<ul>
+<li>Clojure is a Lisp. Lisps like lists.</li>
+<li>The <code>first</code> thing is the function.</li>
+<li>The <code>rest</code> of the list are arguments.</li>
+
+</ul>
+</section>
+<section id="slide-sec-3-3">
+<h3 id="sec-3-3">Vectors</h3>
+<div class="org-src-container">
+
+<pre  class="src src-clojure"><span style="color: #66d9ef;">[</span>1 <span style="color: #E6DB74;">"two"</span> 3.0<span style="color: #66d9ef;">]</span>
+</pre>
+</div>
+<ul>
+<li>Similar to lists.</li>
+<li>The first element isn't special.</li>
+<li>Different performance characteristics.</li>
+
+</ul>
+</section>
+</section>
+<section>
+<section id="slide-sec-4">
+<h2 id="sec-4">Named Functions</h2>
+<div class="outline-text-2" id="text-4">
+</div><ul class="org-ul"><li><a id="sec-4-0-0-1" name="sec-4-0-0-1"></a>Let's Make a New Function<br  /><div class="org-src-container">
+
+<pre  class="src src-clojure"><span style="color: #66d9ef;">(</span><span style="color: #66D9EF;">defn</span> <span style="color: #F92672; font-style: italic;">add-five</span>
+  <span style="color: #E6DB74; font-style: italic;">"This adds five."</span>
+  <span style="color: #a6e22e;">[</span>n<span style="color: #a6e22e;">]</span>
+  <span style="color: #a6e22e;">(</span>+ n 5<span style="color: #a6e22e;">)</span><span style="color: #66d9ef;">)</span>
+</pre>
+</div>
+</li>
+<li><a id="sec-4-0-0-2" name="sec-4-0-0-2"></a>In Use:<br  /><div class="org-src-container">
+
+<pre  class="src src-clojure"><span style="color: #66d9ef;">(</span>add-five 3<span style="color: #66d9ef;">)</span>
+<span style="color: #465457; font-style: italic;">;</span><span style="color: #e6db74; font-style: italic;">=&gt; 8</span>
+</pre>
+</div>
+</li>
+</section>
+<section id="slide-sec-4-1">
+<h3 id="sec-4-1">Named Functions</h3>
+<div class="outline-text-3" id="text-4-1">
+</div><ul class="org-ul"><li><a id="sec-4-1-0-1" name="sec-4-1-0-1"></a>Let's Make Another<br  /><div class="org-src-container">
+
+<pre  class="src src-clojure"><span style="color: #66d9ef;">(</span><span style="color: #66D9EF;">defn</span> <span style="color: #F92672; font-style: italic;">triple</span>
+  <span style="color: #E6DB74; font-style: italic;">"Triple the argument."</span>
+  <span style="color: #a6e22e;">[</span>n<span style="color: #a6e22e;">]</span>
+  <span style="color: #a6e22e;">(</span>* 3 n<span style="color: #a6e22e;">)</span><span style="color: #66d9ef;">)</span>
+</pre>
+</div>
+</li>
+<li><a id="sec-4-1-0-2" name="sec-4-1-0-2"></a>In Use:<br  /><div class="org-src-container">
+
+<pre  class="src src-clojure"><span style="color: #66d9ef;">(</span>triple <span style="color: #a6e22e;">(</span>add-five 3<span style="color: #a6e22e;">)</span><span style="color: #66d9ef;">)</span>
+<span style="color: #465457; font-style: italic;">;</span><span style="color: #e6db74; font-style: italic;">=&gt; 24</span>
+</pre>
+</div>
+</li></ul>
+</section>
+</section>
+<section>
+<section id="slide-sec-5">
+<h2 id="sec-5">Combining Functions</h2>
+<div class="outline-text-2" id="text-5">
+</div><ul class="org-ul"><li><a id="sec-5-0-0-1" name="sec-5-0-0-1"></a>Let's make this into a Function<br  /><div class="org-src-container">
+
+<pre  class="src src-clojure"><span style="color: #66d9ef;">(</span>triple <span style="color: #a6e22e;">(</span>add-five 3<span style="color: #a6e22e;">)</span><span style="color: #66d9ef;">)</span>
+<span style="color: #465457; font-style: italic;">;</span><span style="color: #e6db74; font-style: italic;">=&gt; 24</span>
+</pre>
+</div>
+</li>
+<li><a id="sec-5-0-0-2" name="sec-5-0-0-2"></a>Abstract out the Argument<br  /><div class="org-src-container">
+
+<pre  class="src src-clojure"><span style="color: #66d9ef;">(</span><span style="color: #66D9EF;">defn</span> <span style="color: #F92672; font-style: italic;">foo</span>
+  <span style="color: #a6e22e;">[</span>n<span style="color: #a6e22e;">]</span>
+  <span style="color: #a6e22e;">(</span>triple <span style="color: #e6db74;">(</span>add-five n<span style="color: #e6db74;">)</span><span style="color: #a6e22e;">)</span><span style="color: #66d9ef;">)</span>
+</pre>
+</div>
+</li>
+<li><a id="sec-5-0-0-3" name="sec-5-0-0-3"></a>In Use:<br  /><div class="org-src-container">
+
+<pre  class="src src-clojure"><span style="color: #66d9ef;">(</span>foo 3<span style="color: #66d9ef;">)</span>
+<span style="color: #465457; font-style: italic;">;</span><span style="color: #e6db74; font-style: italic;">=&gt; 24</span>
+</pre>
+</div>
+</li>
+<li><a id="sec-5-0-0-4" name="sec-5-0-0-4"></a>Protip<br  /><p>
+Call it "Syntactic Abstraction" for hipster points.
+</p>
+</li>
+</section>
+<section id="slide-sec-5-1">
+<h3 id="sec-5-1">Syntactic Abstraction</h3>
+<ul>
+<li>This isn't new.</li>
+
+</ul>
+<div class="org-src-container">
+
+<pre  class="src src-clojure"><span style="color: #66d9ef;">(</span><span style="color: #66D9EF;">defn</span> <span style="color: #F92672; font-style: italic;">foo</span>
+  <span style="color: #a6e22e;">[</span>n<span style="color: #a6e22e;">]</span>
+  <span style="color: #a6e22e;">(</span>triple <span style="color: #e6db74;">(</span>add-five n<span style="color: #e6db74;">)</span><span style="color: #a6e22e;">)</span><span style="color: #66d9ef;">)</span>
+</pre>
+</div>
+<ul>
+<li>But it is lightweight.</li>
+<li>And reuses the core syntax.</li>
+
+</ul>
+
+<div class="org-src-container">
+
+<pre  class="src src-clojure"><span style="color: #66d9ef;">(</span>+ 3 4<span style="color: #66d9ef;">)</span>
+<span style="color: #465457; font-style: italic;">;</span><span style="color: #e6db74; font-style: italic;">=&gt; 7</span>
+
+<span style="color: #66d9ef;">(</span>foo 3<span style="color: #66d9ef;">)</span>
+<span style="color: #465457; font-style: italic;">;</span><span style="color: #e6db74; font-style: italic;">=&gt; 24</span>
+</pre>
+</div>
+</section>
+</section>
+<section>
+<section id="slide-sec-6">
+<h2 id="sec-6">Function Arguments</h2>
+<div class="outline-text-2" id="text-6">
+</div><ul class="org-ul"><li><a id="sec-6-0-0-1" name="sec-6-0-0-1"></a>Functions Can Receive Multiple Arguments<br  /><div class="org-src-container">
+
+<pre  class="src src-clojure"><span style="color: #66d9ef;">(</span><span style="color: #66D9EF;">defn</span> <span style="color: #F92672; font-style: italic;">bar</span>
+  <span style="color: #a6e22e;">[</span>a b c<span style="color: #a6e22e;">]</span>
+  <span style="color: #a6e22e;">(</span>+ a <span style="color: #e6db74;">(</span>* b c<span style="color: #e6db74;">)</span><span style="color: #a6e22e;">)</span><span style="color: #66d9ef;">)</span>
+</pre>
+</div>
+</li>
+<li><a id="sec-6-0-0-2" name="sec-6-0-0-2"></a>Functions Can Take Multiple Arguments<br  /><div class="org-src-container">
+
+<pre  class="src src-clojure"><span style="color: #66d9ef;">(</span><span style="color: #66D9EF;">defn</span> <span style="color: #F92672; font-style: italic;">pow4</span>
+  <span style="color: #a6e22e;">[</span>n<span style="color: #a6e22e;">]</span>
+  <span style="color: #a6e22e;">(</span>* n n n n<span style="color: #a6e22e;">)</span><span style="color: #66d9ef;">)</span>
+</pre>
+</div>
+</li>
+
+<li><a id="sec-6-0-0-3" name="sec-6-0-0-3"></a>Once You're Used To It, This:<br  /><div class="org-src-container">
+
+<pre  class="src src-clojure"><span style="color: #66d9ef;">(</span>* a b c d<span style="color: #66d9ef;">)</span>
+</pre>
+</div>
+</li>
+<li><a id="sec-6-0-0-4" name="sec-6-0-0-4"></a>&#x2026;is Nicer Than This:<br  /><div class="org-src-container">
+
+<pre  class="src src-javascript">a * b * c * d
+</pre>
+</div>
+</li></ul>
+</section>
+</section>
+<section>
+<section id="slide-sec-7">
+<h2 id="sec-7">1st Practical</h2>
+<div class="outline-text-2" id="text-7">
+</div></section>
+<section id="slide-sec-7-1">
+<h3 id="sec-7-1">Task</h3>
+<p>
+Write a function that computes <code>5(a^2 + 3b)</code>
+</p>
+
+<p>
+Hint: Start by writing a <code>square</code> function.
+</p>
+<ul class="org-ul"><li><a id="sec-7-1-0-1" name="sec-7-1-0-1"></a>LightTable<br  /><div class="org-src-container">
+
+<pre  class="src src-sh">C-space instarepl
+</pre>
+</div>
+</li>
+
+<li><a id="sec-7-1-0-2" name="sec-7-1-0-2"></a>Syntax Reminder<br  /><div class="org-src-container">
+
+<pre  class="src src-clojure"><span style="color: #66d9ef;">(</span><span style="color: #66D9EF;">defn</span> <span style="color: #F92672; font-style: italic;">bar</span>
+  <span style="color: #a6e22e;">[</span>a b c<span style="color: #a6e22e;">]</span>
+  <span style="color: #a6e22e;">(</span>+ a <span style="color: #e6db74;">(</span>* b c<span style="color: #e6db74;">)</span><span style="color: #a6e22e;">)</span><span style="color: #66d9ef;">)</span>
+
+<span style="color: #66d9ef;">(</span><span style="color: #66D9EF;">defn</span> <span style="color: #F92672; font-style: italic;">pow4</span>
+  <span style="color: #a6e22e;">[</span>n<span style="color: #a6e22e;">]</span>
+  <span style="color: #a6e22e;">(</span>* n n n n<span style="color: #a6e22e;">)</span><span style="color: #66d9ef;">)</span>
+</pre>
+</div>
+</li></ul>
+
+</section>
+</section>
+<section>
+<section id="slide-sec-8">
+<h2 id="sec-8">How Did We Do?</h2>
+<div class="outline-text-2" id="text-8">
+</div><ul class="org-ul"><li><a id="sec-8-0-0-1" name="sec-8-0-0-1"></a>Something Like This?<br  /><div class="org-src-container">
+
+<pre  class="src src-clojure"><span style="color: #66d9ef;">(</span><span style="color: #66D9EF;">defn</span> <span style="color: #F92672; font-style: italic;">square</span>
+  <span style="color: #a6e22e;">[</span>n<span style="color: #a6e22e;">]</span>
+  <span style="color: #a6e22e;">(</span>* n n<span style="color: #a6e22e;">)</span><span style="color: #66d9ef;">)</span>
+
+<span style="color: #66d9ef;">(</span><span style="color: #66D9EF;">defn</span> <span style="color: #F92672; font-style: italic;">triple</span>
+  <span style="color: #a6e22e;">[</span>n<span style="color: #a6e22e;">]</span>
+  <span style="color: #a6e22e;">(</span>* 3 n<span style="color: #a6e22e;">)</span><span style="color: #66d9ef;">)</span>
+
+<span style="color: #66d9ef;">(</span><span style="color: #66D9EF;">defn</span> <span style="color: #F92672; font-style: italic;">formula</span>
+  <span style="color: #E6DB74; font-style: italic;">"Compute 5(a^2 + 3b)"</span>
+  <span style="color: #a6e22e;">[</span>a b<span style="color: #a6e22e;">]</span>
+  <span style="color: #a6e22e;">(</span>* 5
+     <span style="color: #e6db74;">(</span>+ <span style="color: #8f8f8f;">(</span>square a<span style="color: #8f8f8f;">)</span>
+        <span style="color: #8f8f8f;">(</span>triple b<span style="color: #8f8f8f;">)</span><span style="color: #e6db74;">)</span><span style="color: #a6e22e;">)</span><span style="color: #66d9ef;">)</span>
+</pre>
+</div>
+</li>
+<li><a id="sec-8-0-0-2" name="sec-8-0-0-2"></a>Operator Precedence?<br  /></li></ul>
+</section>
+</section>
+<section>
+<section id="slide-sec-9">
+<h2 id="sec-9">Gotchas</h2>
+<div class="outline-text-2" id="text-9">
+</div></section>
+<section id="slide-sec-9-1">
+<h3 id="sec-9-1">Calling Functions 1</h3>
+<div class="org-src-container">
+
+<pre  class="src src-clojure"><span style="color: #66d9ef;">(</span><span style="color: #66D9EF;">defn</span> <span style="color: #F92672; font-style: italic;">square</span>
+  <span style="color: #a6e22e;">[</span>x<span style="color: #a6e22e;">]</span>
+  <span style="color: #a6e22e;">(</span>x * x<span style="color: #a6e22e;">)</span><span style="color: #66d9ef;">)</span>
+</pre>
+</div>
+
+<span class="fragment roll-in"><p>
+The function is always the <i>first</i> thing in the list.
+</p></span>
+
+<div class="org-src-container">
+
+<pre  class="fragment roll-in"><span style="color: #66d9ef;">(</span><span style="color: #66D9EF;">defn</span> <span style="color: #F92672; font-style: italic;">square</span>
+  <span style="color: #a6e22e;">[</span>x<span style="color: #a6e22e;">]</span>
+  <span style="color: #a6e22e;">(</span>* x x<span style="color: #a6e22e;">)</span><span style="color: #66d9ef;">)</span>
+</pre>
+</div>
+
+</section>
+<section id="slide-sec-9-2">
+<h3 id="sec-9-2">Calling Functions 2</h3>
+<div class="org-src-container">
+
+<pre  class="src src-clojure"><span style="color: #66d9ef;">(</span><span style="color: #66D9EF;">defn</span> <span style="color: #F92672; font-style: italic;">square</span>
+  <span style="color: #a6e22e;">[</span>x<span style="color: #a6e22e;">]</span>
+  * <span style="color: #a6e22e;">(</span>x x<span style="color: #a6e22e;">)</span><span style="color: #66d9ef;">)</span>
+</pre>
+</div>
+
+<span class="fragment roll-in"><p>
+The function is always the first thing <i>in</i> the list.
+</p></span>
+
+<div class="org-src-container">
+
+<pre  class="fragment roll-in"><span style="color: #66d9ef;">(</span><span style="color: #66D9EF;">defn</span> <span style="color: #F92672; font-style: italic;">square</span>
+  <span style="color: #a6e22e;">[</span>x<span style="color: #a6e22e;">]</span>
+  <span style="color: #a6e22e;">(</span>* x x<span style="color: #a6e22e;">)</span><span style="color: #66d9ef;">)</span>
+</pre>
+</div>
+
+</section>
+<section id="slide-sec-9-3">
+<h3 id="sec-9-3">Calling Functions 3</h3>
+<div class="org-src-container">
+
+<pre  class="src src-clojure"><span style="color: #66d9ef;">(</span><span style="color: #66D9EF;">defn</span> <span style="color: #F92672; font-style: italic;">square</span>
+  <span style="color: #a6e22e;">[</span>x<span style="color: #a6e22e;">]</span>
+  * x x<span style="color: #66d9ef;">)</span>
+</pre>
+</div>
+
+<span class="fragment roll-in"><p>
+The function is always the first thing in the <i>list</i>.
+</p></span>
+
+<div class="org-src-container">
+
+<pre  class="fragment roll-in"><span style="color: #66d9ef;">(</span><span style="color: #66D9EF;">defn</span> <span style="color: #F92672; font-style: italic;">square</span>
+  <span style="color: #a6e22e;">[</span>x<span style="color: #a6e22e;">]</span>
+  <span style="color: #a6e22e;">(</span>* x x<span style="color: #a6e22e;">)</span><span style="color: #66d9ef;">)</span>
+</pre>
+</div>
+</section>
+<section id="slide-sec-9-4">
+<h3 id="sec-9-4">Summary</h3>
+<ul>
+<li>The function is always the <i>first</i> thing in the list.</li>
+<li>The function is always the first thing <i>in</i> the list.</li>
+<li>The function is always the first thing in the <i>list</i>.</li>
+
+</ul>
+</section>
+</section>
+<section>
+<section id="slide-sec-10">
+<h2 id="sec-10">More Syntax</h2>
+<div class="outline-text-2" id="text-10">
+</div></section>
+<section id="slide-sec-10-1">
+<h3 id="sec-10-1">Strings</h3>
+<div class="org-src-container">
+
+<pre  class="src src-clojure"><span style="color: #66d9ef;">[</span><span style="color: #E6DB74;">"hello"</span> <span style="color: #E6DB74;">"world"</span><span style="color: #66d9ef;">]</span>
+</pre>
+</div>
+<ul class="org-ul"><li><a id="sec-10-1-0-1" name="sec-10-1-0-1"></a>Double Quotes, Not Single Quotes<br  /></li></ul>
+</section>
+<section id="slide-sec-10-2">
+<h3 id="sec-10-2">Keywords</h3>
+<div class="org-src-container">
+
+<pre  class="src src-clojure"><span style="color: #66d9ef;">[</span><span style="color: #AE81FF;">:foo</span> <span style="color: #AE81FF;">:bar</span> <span style="color: #AE81FF;">:foobarbara</span><span style="color: #66d9ef;">]</span>
+</pre>
+</div>
+
+</section>
+<section id="slide-sec-10-3">
+<h3 id="sec-10-3">Maps</h3>
+<div class="org-src-container">
+
+<pre  class="src src-clojure"><span style="color: #66d9ef;">{</span><span style="color: #AE81FF;">:name</span> <span style="color: #E6DB74;">"Steve"</span>
+ <span style="color: #AE81FF;">:age</span> 34<span style="color: #66d9ef;">}</span>
+</pre>
+</div>
+<ul class="org-ul"><li><a id="sec-10-3-0-1" name="sec-10-3-0-1"></a>Properties:<br  /><ul>
+<li>Unordered collection of key-value pairs.</li>
+<li>Remember commas are whitespace.</li>
+
+</ul>
+</li></ul>
+</section>
+<section id="slide-sec-10-4">
+<h3 id="sec-10-4">Maps &amp; Keywords Are Functions</h3>
+<div class="org-src-container">
+
+<pre  class="src src-clojure"><span style="color: #66d9ef;">(</span><span style="color: #66D9EF;">def</span> <span style="color: #F92672;">person</span>
+  <span style="color: #E6DB74; font-style: italic;">"Hello, my name is Steve."</span>
+  <span style="color: #a6e22e;">{</span><span style="color: #AE81FF;">:name</span> <span style="color: #E6DB74;">"Steve"</span>
+   <span style="color: #AE81FF;">:age</span> 34<span style="color: #a6e22e;">}</span><span style="color: #66d9ef;">)</span>
+</pre>
+</div>
+
+<ul class="org-ul"><li><a id="sec-10-4-0-1" name="sec-10-4-0-1"></a>Can We Print It?<br  /><div class="org-src-container">
+
+<pre  class="src src-clojure"><span style="color: #66d9ef;">(</span>str person<span style="color: #66d9ef;">)</span>
+<span style="color: #465457; font-style: italic;">;</span><span style="color: #e6db74; font-style: italic;">=&gt; {:age 34, :name "Steve"}</span>
+</pre>
+</div>
+</li>
+
+<li><a id="sec-10-4-0-2" name="sec-10-4-0-2"></a>A Map is a Function of its Keys<br  /><div class="org-src-container">
+
+<pre  class="src src-clojure"><span style="color: #66d9ef;">(</span>person <span style="color: #AE81FF;">:age</span><span style="color: #66d9ef;">)</span>
+<span style="color: #465457; font-style: italic;">;</span><span style="color: #e6db74; font-style: italic;">=&gt; 34</span>
+</pre>
+</div>
+</li>
+<li><a id="sec-10-4-0-3" name="sec-10-4-0-3"></a>A Keyword is a Function that takes a Map<br  /><div class="org-src-container">
+
+<pre  class="src src-clojure"><span style="color: #66d9ef;">(</span><span style="color: #AE81FF;">:age</span> person<span style="color: #66d9ef;">)</span>
+<span style="color: #465457; font-style: italic;">;</span><span style="color: #e6db74; font-style: italic;">=&gt; 34</span>
+</pre>
+</div>
+</li>
+</section>
+<section id="slide-sec-10-4-1">
+<h4 id="sec-10-4-1">Another Example</h4>
+<div class="org-src-container">
+
+<pre  class="src src-clojure"><span style="color: #66d9ef;">{</span>0 <span style="color: #E6DB74;">"zero"</span>
+ 1 <span style="color: #E6DB74;">"one"</span>
+ <span style="color: #E6DB74;">"???"</span> <span style="color: #AE81FF;">:john</span><span style="color: #66d9ef;">}</span>
+</pre>
+</div>
+<ul>
+<li>Arbitrary keys, arbitrary values.</li>
+
+</ul>
+</section>
+</section>
+<section>
+<section id="slide-sec-11">
+<h2 id="sec-11">On to ClojureScript</h2>
+<div class="outline-text-2" id="text-11">
+</div></section>
+<section id="slide-sec-11-1">
+<h3 id="sec-11-1">Let's Dive In</h3>
+<p>
+&#x2026;by exploring:
+</p>
+
+<div class="org-src-container">
+
+<pre  class="src src-sh">git clone https://github.com/krisajenkins/CLJS-Demo
+</pre>
+</div>
+
+<div class="org-src-container">
+
+<pre  class="src src-sh">lein new chestnut hackernews -- --less --om-tools
+lein repl
+</pre>
+</div>
+
+<div class="org-src-container">
+
+<pre  class="src src-clojure"><span style="color: #66d9ef;">(</span>run<span style="color: #66d9ef;">)</span>
+<span style="color: #66d9ef;">(</span>browser-repl<span style="color: #66d9ef;">)</span>
+</pre>
+</div>
+</section>
+</section>
+</div>
+</div>
+
+<script src="file:///Users/kris/Work/ThirdParty/reveal.js/lib/js/head.min.js"></script>
+<script src="file:///Users/kris/Work/ThirdParty/reveal.js/js/reveal.js"></script>
+
+<script>
+// Full list of configuration options available here:
+// https://github.com/hakimel/reveal.js#configuration
+Reveal.initialize({
+
+controls: true,
+progress: true,
+history: true,
+center: true,
+slideNumber: true,
+rollingLinks: false,
+keyboard: true,
+overview: true,
+
+theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+transition: Reveal.getQueryHash().transition || 'default', // default/cube/page/concave/zoom/linear/fade/none
+transitionSpeed: 'default',
+multiplex: {
+    secret: '', // null if client
+    id: '', // id, obtained from socket.io server
+    url: '' // Location of socket.io server
+},
+
+// Optional libraries used to extend on reveal.js
+dependencies: [
+ { src: 'file:///Users/kris/Work/ThirdParty/reveal.js/lib/js/classList.js', condition: function() { return !document.body.classList; } },
+ { src: 'file:///Users/kris/Work/ThirdParty/reveal.js/plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+ { src: 'file:///Users/kris/Work/ThirdParty/reveal.js/plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+ { src: 'file:///Users/kris/Work/ThirdParty/reveal.js/plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+ { src: 'file:///Users/kris/Work/ThirdParty/reveal.js/plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+ { src: 'file:///Users/kris/Work/ThirdParty/reveal.js/plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }
+]
+});
+</script>
+</body>
+</html>
